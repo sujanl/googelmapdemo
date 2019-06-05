@@ -65,11 +65,11 @@
         android:id="@+id/value_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="8dp"
         android:text="city"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tview_city"
         app:layout_constraintTop_toBottomOf="@+id/value_lng" />
 
 </android.support.constraint.ConstraintLayout>

@@ -22,4 +22,9 @@ public class MainActivity extends AppCompatActivity {
         intent = new Intent(this, LocateMe.class);
         startActivity(intent);
     }
+
+  /*  public void getMyLocation(View view) {
+        intent = new Intent(this, GetMyLocation.class);
+        startActivity(intent);
+    }*/
 }

@@ -21,20 +21,16 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         Bundle bundle = getIntent().getExtras();
 
-        float lat = bundle.getFloat("latitude");
-        float lng = bundle.getFloat("longitude");
+        double lat = bundle.getDouble("latitude");
+        double lng = bundle.getDouble("longitude");
+        Log.d("Location ", "lat>"+lat+", lng>"+lng);
 
         String cityName = null;
-//        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-//        List<Address> addressList;
-//        try{
-//            addressList = geocoder.getFromLocation(lat, lng, 1);
-//            if(addressList.size() > 0 )
-//                Log.v("city:", addressList.get(0).getLocality());
-//            cityName = addressList.get(0).getLocality();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            cityName = getAddress(lat, lng);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         TextView textView = null;
         textView = findViewById(R.id.value_lat);
@@ -44,8 +40,39 @@ public class DetailsActivity extends AppCompatActivity {
         textView.setText(String.valueOf(lng));
 
         textView = findViewById(R.id.value_city);
-        textView.setText("comming soon");
+        textView.setText(cityName);
 
 
+    }
+
+    private String getAddress(double latitude, double longitude) throws IOException {
+        Log.d("Location ", "lat>"+latitude+", lng>"+longitude);
+        String keyLocation = null;
+        String address = null, city = null, state = null, country = null, postalCode = null, knownName = null;
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && addresses.size() > 0) {
+
+                address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                city = addresses.get(0).getLocality();
+                state = addresses.get(0).getAdminArea();
+                country = addresses.get(0).getCountryName();
+                postalCode = addresses.get(0).getPostalCode();
+                knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+
+                Log.d("Address", "getAddress:  address>>" + address);
+                Log.d("City", "getAddress:  city>>" + city);
+                Log.d("State", "getAddress:  state>>" + state);
+                Log.d("Code", "getAddress:  postalCode>>" + postalCode);
+                Log.d("Known Name", "getAddress:  knownName>>" + knownName);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        keyLocation = "Address: "+address+", City: "+city+", state: "+state
+                +", postal code: "+postalCode+", Known as:"+ knownName;
+        return keyLocation;
     }
 }

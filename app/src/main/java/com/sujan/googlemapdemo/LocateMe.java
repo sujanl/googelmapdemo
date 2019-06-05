@@ -37,23 +37,24 @@ public class LocateMe extends FragmentActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_locate_me);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLastLocation();
-
     }
 
     private void fetchLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            return;
+            Log.d("Error", "Errors in permission");
         }
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        Log.d("Task", task.toString());
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 if(location != null){
                     currentLocation = location;
+                    Log.d("Location ", "lat>"+location.getLatitude()+", lng>"+location.getLongitude());
                     Toast.makeText(getApplicationContext(), currentLocation.getLatitude()+
-                            ","+currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+                            ","+currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                     SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
                             .findFragmentById(R.id.my_location_frag);
                     supportMapFragment.getMapAsync(LocateMe.this);
@@ -76,7 +77,6 @@ public class LocateMe extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng myLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         mMap.addMarker(new MarkerOptions().position(myLatLng).title("My Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 13F));
@@ -94,9 +94,13 @@ public class LocateMe extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void doReport(View view) {
+        Log.d("Location ", "lat>"+currentLocation.getLatitude()+", lng>"+currentLocation.getLongitude());
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("latitute", currentLocation.getLatitude());
-        intent.putExtra("longitude", currentLocation.getLongitude());
+        Bundle b = new Bundle();
+        b.putDouble("latitude", currentLocation.getLatitude());
+        b.putDouble("longitude", currentLocation.getLongitude());
+        intent.putExtras(b);
+        Log.d("Bundle", b.toString());
         startActivity(intent);
     }
 }
